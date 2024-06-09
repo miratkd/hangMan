@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserFullResource;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 
@@ -65,5 +67,23 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function me (Request $request){
+        return response()->json($request->user(),200);
+    }
+
+    public function login(LoginRequest $request){
+        $credentials = json_decode($request->getContent(), true);
+        if (Auth::attempt($credentials)){
+            $user = Auth::user();
+            return response()->json([
+                'message' => 'Token created',
+                'type' => 'Bearer',
+                'token' => $user->createToken('user-token', [], now()->addHours(6))->plainTextToken,
+                'duration' => '6 hours'
+            ], 201);
+        }
+        return response()->json(['error' => 'Wrong credentials'],403);
     }
 }
