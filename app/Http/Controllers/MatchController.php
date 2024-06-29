@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\GameMatch;
 use App\Models\Word;
 use App\Http\Resources\GameResource;
+use App\Http\Resources\GameListResource;
 use \Datetime;
 
 
@@ -92,10 +93,9 @@ class MatchController extends Controller
     public function getAvaibleMatches(Request $request)
     {
         $now = strtotime("-10 minutes");
-        print(date("Y-m-d", $now));
         $query = GameMatch::where('user_id',$request->user()->id)->where('is_win',false)->whereDate('created_at', '>=', date("Y-m-d", $now))->get();
         $resp = [];
         foreach ($query as $game) if (!$game->isTimeout() && Strlen($game->letters_list) - $game->letters_right <= 5) array_push($resp, $game);
-        return GameResource::collection($resp);
+        return GameListResource::collection($resp);
     }
 }
