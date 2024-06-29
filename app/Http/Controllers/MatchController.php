@@ -7,6 +7,8 @@ use App\Models\GameMatch;
 use App\Models\Word;
 use App\Http\Resources\GameResource;
 use App\Http\Resources\GameListResource;
+use App\Http\Resources\GameFailResource;
+use Illuminate\Database\Eloquent\Builder;
 use \Datetime;
 
 
@@ -34,13 +36,17 @@ class MatchController extends Controller
     public function store(Request $request)
     {
         if (!$request['categoryId']) return Response()->json(['message'=>'categoryId is required.'], 422);
-        $word = Word::where('category_id', $request['categoryId'])->get();
+        $completedWords = Word::where('category_id', $request['categoryId'])->whereHas('matches', function (Builder $query) use ($request) {
+            $query->where('user_id', $request->user()->id)->where('is_win',1);
+        })->get()->pluck('id');
+        $word = Word::where('category_id', $request['categoryId'])->whereNotIn('id', $completedWords)->get();
         $game = new GameMatch;
         $game->letters_list='';
         $game->letters_right=0;
         $game->is_win=false;
         $game->user_id=$request->user()->id;
-        $game->word_id=$word[mt_rand(0,count($word)-1)]->id;
+        if (count($word)>0) $game->word_id=$word[mt_rand(0,count($word)-1)]->id;
+        else $game->word_id=$completedWords[mt_rand(0,count($completedWords)-1)];
         $game->save();
         return new GameResource($game);
     }
@@ -79,6 +85,7 @@ class MatchController extends Controller
         $game->letters_list = $game->letters_list . $request['letter'];
         $game->is_win = $game->isWin();
         $game->save();
+        if (Strlen($game->letters_list) - $game->letters_right > 5) return new GameFailResource($game);
         return new GameResource($game);
     }
 
