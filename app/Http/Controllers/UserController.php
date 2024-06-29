@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json('Method is not supported for this route',405);
     }
 
     /**
@@ -42,7 +42,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return response()->json('Method is not supported for this route',405);
     }
 
     /**
@@ -58,7 +58,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        return response()->json('Method is not supported for this route',405);
     }
 
     /**
@@ -66,7 +66,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return response()->json('Method is not supported for this route',405);
     }
 
     public function me (Request $request){
