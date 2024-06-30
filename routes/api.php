@@ -12,4 +12,5 @@ Route::group(['namespace'=>'App\Http\Controllers', 'middleware' => 'auth:sanctum
     Route::get('/categories', ['uses' => 'CategoryController@index']);
     Route::apiResource('/match', MatchController::class);
     Route::get('/avaible',['uses'=>'MatchController@getAvaibleMatches']);
+    Route::get('/history',['uses'=>'UserController@history']);
 });

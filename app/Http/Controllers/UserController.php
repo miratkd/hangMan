@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserFullResource;
 use App\Http\Requests\LoginRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\GameListResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\GameMatch;
 
 
 class UserController extends Controller
@@ -70,7 +73,10 @@ class UserController extends Controller
     }
 
     public function me (Request $request){
-        return response()->json($request->user(),200);
+        return new UserResource($request->user());
+    }
+    public function history (Request $request){
+        return GameListResource::collection($request->user()->matches()->orderBy('id', 'desc')->paginate(10));
     }
 
     public function login(LoginRequest $request){
