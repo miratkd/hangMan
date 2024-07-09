@@ -26,7 +26,8 @@ class GameResource extends JsonResource
             'letters_list' => $this->letters_list,
             'letters_right' => $this->letters_right,
             'is_win' => $this->is_win,
-            'word' => $resp
+            'word' => $resp,
+            'created_at' => $this->created_at
         ];
     }
 }
