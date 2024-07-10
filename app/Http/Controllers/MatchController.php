@@ -78,9 +78,9 @@ class MatchController extends Controller
         $game = GameMatch::find($id);
         if (!$game) return Response()->json('Not found',404);
         if ($game && $game->user_id != $request->user()->id) return Response()->json('Access Denied',403);
-        if ($game->is_win || Strlen($game->letters_list) - $game->letters_right > 5) return Response()->json('Sorry, this match is over',400);
+        if ($game->is_win || Strlen($game->letters_list) - $game->letters_right > 5) return new GameFailResource($game);
         if (in_array($request['letter'], str_split($game->letters_list))) return Response()->json('Sorry, you already chose this letter',400);
-        if($game->isTimeout()) return Response()->json('Sorry, this match is over',400);
+        if($game->isTimeout()) return new GameFailResource($game);
         if (in_array($request['letter'], str_split(strtolower(iconv('UTF-8','ASCII//TRANSLIT',$game->word()->first()->text))))) $game->letters_right++;
         $game->letters_list = $game->letters_list . $request['letter'];
         $game->is_win = $game->isWin();
