@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use \Datetime;
 
 class GameResource extends JsonResource
 {
@@ -20,6 +21,8 @@ class GameResource extends JsonResource
             if (in_array(strtolower($word[$i]),str_split($this->letters_list))||$word[$i] == ' ') array_push($resp,$word[$i]);
             else array_push($resp,null);
         }
+        $created = new DateTime($this->created_at);
+        $now = new DateTime();
         return [
             'id' => $this->id,
             'category' => $this->word()->first()->category()->first()->name,
@@ -27,7 +30,7 @@ class GameResource extends JsonResource
             'letters_right' => $this->letters_right,
             'is_win' => $this->is_win,
             'word' => $resp,
-            'created_at' => $this->created_at
+            'time_left' => 600 - ($now->getTimestamp() - $created->getTimestamp())
         ];
     }
 }
