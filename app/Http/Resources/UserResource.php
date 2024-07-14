@@ -17,7 +17,7 @@ class UserResource extends JsonResource
         return [
             'name' => $this->name,
             'email' => $this->email,
-            'createdAt' => date('d-m-Y',strtotime($this->created_at)),
+            'createdAt' => date('d/m/Y',strtotime($this->created_at)),
             'wordsCompleteds' => $this->matches()->where('is_win',1)->count()
         ];
     }
